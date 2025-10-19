@@ -243,6 +243,8 @@ sapply(mtcars, mean)
 
 
 apply(mtcars, 2, quantile, probs = c(0.25, 0.75))
+
+aggregate(. ~ cyl, data = mtcars, FUN = mean)
 ```
 
 ------------------------------------------------------------------------
