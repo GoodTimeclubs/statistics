@@ -68,6 +68,8 @@ Solution
 ```         
 x <- c(1:8)
 
+x^2 - 3*x + 2
+
 m <- mean(x)
 v <- var(x)
 sd <- sd(x)
@@ -94,7 +96,9 @@ y[2:4] # index 2 to 4
 
 y[-1] # exclude index 1
 
-y <- c(y, c(1,2))
+add <- y + c(1,2)
+
+#y <- c(y, c(1,2))
 #y becomes a combination of y and then the new vector
 ```
 
@@ -112,10 +116,10 @@ sex <- c("male","female","female","male","male")
 #factor
 sex <- factor(sex)
 
-#frequency table
+#frequency table (Absolute Häufigkeit)
 table(sex)
 
-#proportion table
+#proportion table (Relative Häufigkeit)
 prop.table(table(sex))
 ```
 
@@ -134,17 +138,22 @@ Create a 3×3 matrix `M` filled by rows with the numbers 1 to 9. Compute:
 Solution
 
 ```         
-M <- matrix(1:9, nrow = 3, ncol = 3) 
+M <- matrix(1:9, nrow = 3, ncol = 3, byrow = T) 
 
 M %*% t(M) #inverts the matrix and creates a sum with the normal matrix
 
-sum(M[,1])
-sum(M[,2])
-sum(M[,3])
+#M[row,colum]
 
-mean(M[1,])
-mean(M[2,])
-mean(M[3,])
+col_sums <- colSums(M)
+row_means <- rowMeans(M)
+
+#sum(M[,1])
+#sum(M[,2])
+#sum(M[,3])
+
+#mean(M[1,])
+#mean(M[2,])
+#mean(M[3,])
 
 two <- M[,2]
 
