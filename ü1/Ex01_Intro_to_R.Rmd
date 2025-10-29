@@ -225,7 +225,7 @@ Solution
 z_score <- function(x){
   
   if(sd(x) == 0){
-    print("Warning! sd(x) is zero")
+    warning("Warning! sd(x) is zero")
   }
   
   return((x - mean(x))/sd(x))
@@ -234,6 +234,7 @@ z_score <- function(x){
 z_score(c(5,5,5))
 
 z_score(c(1,2,3,4))
+#um Spalte in Tabelle zu kriegen mit $ auf den Namen zugreifen
 ```
 
 ------------------------------------------------------------------------
@@ -257,9 +258,10 @@ sapply(mtcars, mean)
 #eine Funktion auf jedes Element einer Liste, eines Vektors oder eines Datenframes anwenden und als Ergebnis einen Vektor anstelle einer Liste erhalten möchten.
 
 
+
 apply(mtcars, 2, quantile, probs = c(0.25, 0.75))
 
-aggregate(. ~ cyl, data = mtcars, FUN = mean)
+df <- aggregate(. ~ cyl, data = mtcars, FUN = mean)
 ```
 
 ------------------------------------------------------------------------

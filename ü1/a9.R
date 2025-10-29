@@ -4,9 +4,8 @@ sapply(mtcars, mean)
 
 apply(mtcars, 2, quantile, probs = c(0.25, 0.75))
 
-df <- data.frame(mtcars)
 
-aggregate(. ~ cyl, data = mtcars, FUN = mean)
+df <- aggregate(. ~ cyl, data = mtcars, FUN = mean)
 
 #Erklärung:
   
@@ -19,3 +18,4 @@ aggregate(. ~ cyl, data = mtcars, FUN = mean)
 #data = mtcars gibt den Datensatz an.
 
 #FUN = mean bedeutet, dass für jede Spalte der Mittelwert berechnet wird.
+
