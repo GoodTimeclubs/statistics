@@ -25,7 +25,7 @@ vals <- c(sapply(subs, function(A) {
     return(sum(p[A]))
   }
   if(length(A)==0){
-    0
+    return (0)
   }
 }))
 
