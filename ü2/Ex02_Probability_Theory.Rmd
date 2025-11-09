@@ -268,36 +268,40 @@ legend("topleft",
 Answer the question from the lecture notes both exactly with pen and paper and approximately via simulation.
 
 ```         
-#init
-wstwin <- logical(0)
-nsims <- 20000
-for(i in 1:nsims){
-  doors <- logical(3)
-  doors[sample(3,1)] <- TRUE
-  #Türen initialisierung mit einer Gewinnertür
-  
-  choosen <- sample(3,1)
-  #Auswahl der Tür
-  
-  
-  doorToOpen <- sample(3,1)
-  while(doorToOpen == choosen || doors[doorToOpen] == TRUE){
-    doorToOpen <- sample(3,1)
-  }
-  #Verlierertür durch Moderator geöffnet
-  
-  doors[doorToOpen] <- NA
-  #geöffnete Tür entfernen
-  
-  #would a stay win
-  if(doors[choosen] == TRUE){
-    wstwin <- c(wstwin, TRUE)
+#Exercise 1.5.4. If you flip three fair coins, what is the probability that the first coin shows
+#heads given that exactly two of the three coins are heads?
+
+#1 = number , 2 = heads
+
+getDice <- function(){
+  throws = sample(2,3,replace=TRUE)
+  if (sum(throws) == 5){
+    return(throws)
   }else{
-    wstwin <- c(wstwin, FALSE)
+    getDice()
   }
 }
 
-result <- mean(wstwin)
+nsims = 200000
+
+
+isHead = logical(0)
+
+for(i in 1:nsims){
+
+  throws = getDice()
+  
+  if(throws[1] == 2){
+    isHead = c(isHead,TRUE)
+  }else{
+    isHead = c(isHead,FALSE)
+  }
+  
+  if (i %% 1000 == 0) print(i)
+}
+
+result = mean(isHead)
+
 result
 ```
 
@@ -394,6 +398,33 @@ if (Seperated != Combined){
 Answer the question from the lecture notes exactly with pen and paper and approximately via simulation.
 
 ```         
+#Urn filling
+nBlue <- 12
+nRed <- 8
+total <- nBlue + nRed
+nsims <- 2000
+
+Urn <- logical(0)
+check <- matrix(nrow=nsims, ncol=5)
+
+for(i in 1:nBlue){
+  Urn <- c(Urn, FALSE)
+}
+for(i in 1:nRed){
+  Urn <- c(Urn, TRUE)
+}
+
+for(i in 1:nsims){
+
+  draws = sample(20, 5, replace = FALSE)
+
+  check[i,] = Urn[draws]
+
+}
+
+out = colMeans(check)
+
+out
 ```
 
 # 10) Example 1.5.3
@@ -401,4 +432,35 @@ Answer the question from the lecture notes exactly with pen and paper and approx
 Answer the question "Should the contestant in the Monty Hall Show stay or switch?" approximately via simulation.
 
 ```         
+#init
+wstwin <- logical(0)
+nsims <- 20000
+for(i in 1:nsims){
+  doors <- logical(3)
+  doors[sample(3,1)] <- TRUE
+  #Türen initialisierung mit einer Gewinnertür
+  
+  choosen <- sample(3,1)
+  #Auswahl der Tür
+  
+  
+  doorToOpen <- sample(3,1)
+  while(doorToOpen == choosen || doors[doorToOpen] == TRUE){
+    doorToOpen <- sample(3,1)
+  }
+  #Verlierertür durch Moderator geöffnet
+  
+  doors[doorToOpen] <- NA
+  #geöffnete Tür entfernen
+  
+  #would a stay win
+  if(doors[choosen] == TRUE){
+    wstwin <- c(wstwin, TRUE)
+  }else{
+    wstwin <- c(wstwin, FALSE)
+  }
+}
+
+result <- mean(wstwin)
+result
 ```

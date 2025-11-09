@@ -2,9 +2,9 @@
 
 nsims = 100000
 
-A = logical(nsims)
-C = logical(nsims)
-ACSim = logical(nsims)
+A = logical(0)
+C = logical(0)
+ACSim = logical(0)
 
 
 

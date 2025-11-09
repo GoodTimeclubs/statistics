@@ -1,31 +1,35 @@
-#init
-wstwin <- logical(0)
-nsims <- 20000
-for(i in 1:nsims){
-  doors <- logical(3)
-  doors[sample(3,1)] <- TRUE
-  #Türen initialisierung mit einer Gewinnertür
-  
-  choosen <- sample(3,1)
-  #Auswahl der Tür
-  
-  
-  doorToOpen <- sample(3,1)
-  while(doorToOpen == choosen || doors[doorToOpen] == TRUE){
-    doorToOpen <- sample(3,1)
-  }
-  #Verlierertür durch Moderator geöffnet
-  
-  doors[doorToOpen] <- NA
-  #geöffnete Tür entfernen
-  
-  #would a stay win
-  if(doors[choosen] == TRUE){
-    wstwin <- c(wstwin, TRUE)
+#Exercise 1.5.4. If you flip three fair coins, what is the probability that the first coin shows
+#heads given that exactly two of the three coins are heads?
+
+#1 = number , 2 = heads
+
+getDice <- function(){
+  throws = sample(2,3,replace=TRUE)
+  if (sum(throws) == 5){
+    return(throws)
   }else{
-    wstwin <- c(wstwin, FALSE)
+    getDice()
   }
 }
 
-result <- mean(wstwin)
+nsims = 200000
+
+
+isHead = logical(0)
+
+for(i in 1:nsims){
+
+  throws = getDice()
+  
+  if(throws[1] == 2){
+    isHead = c(isHead,TRUE)
+  }else{
+    isHead = c(isHead,FALSE)
+  }
+  
+  if (i %% 1000 == 0) print(i)
+}
+
+result = mean(isHead)
+
 result
