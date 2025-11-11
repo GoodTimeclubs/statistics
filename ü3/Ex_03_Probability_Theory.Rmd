@@ -1,0 +1,179 @@
+---
+title: "Ex03: Probability Theory — Practice Set II (10 Exercises)"
+author: "Martin Simon"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.width = 7, fig.height = 5, fig.retina = 2)
+set.seed(42)
+N <- 1e6        # main Monte Carlo sample size (adjust if knitting is slow)
+```
+
+## 1) Exercise 2.3.3 — Product of two fair dice (pmf via simulation)
+
+Two fair dice are thrown; let $Y$ be the product. Estimate the pmf of $Y$ by simulation.
+
+```         
+nsamples <- 1000
+Y <- c()
+result <- c()
+
+for(i in 1:nsamples){
+  dice1 <- sample(6,1)
+  dice2 <- sample(6,1)
+  Y <- c(Y,dice1 * dice2)
+}
+counts <- table(Y)
+totalcount <- length(counts)
+
+for (j in 1:totalcount){
+  result <- c(result,counts[j]/nsamples)
+}
+
+result
+barplot(result)
+
+#check
+sum(result)
+```
+
+## 2) Exercise 2.3.4 — $Z\sim\mathrm{Geometric}(p)$: $\mathbb{P}(5\le Z\le 9)$ via simulation
+
+We adopt the convention $Z\in\{1,2,\dots\}$ (number of trials until the first success). Set $p$ below as needed.
+
+```         
+# Parameter
+p <- 0.3       # Erfolgswahrscheinlichkeit
+n <- 1e6       # Anzahl der Simulationen
+
+# Simulation: Z ~ Geometric(p), mit Werten {1, 2, 3, ...}
+Z <- rgeom(n, p) + 1
+
+# Gesuchte Wahrscheinlichkeit: P(5 <= Z <= 9)
+prob_est <- mean(Z >= 5 & Z <= 9)
+prob_est
+```
+
+## 3) Exercise 2.3.5 — $X\sim\mathrm{Binomial}(12,p)$: maximize $\mathbb{P}(X=11)$ via simulation
+
+We scan a grid of $p$ values, estimate $\mathbb{P}(X=11)$ for each by simulation, and report the maximizer.
+
+```         
+set.seed(42)                # Reproduzierbarkeit
+n      <- 12                # Binomial-Parameter n
+k      <- 11                # Wir interessieren uns für P(X = 11)
+grid_p <- seq(0, 1, by = 0.001)  # p-Gitter (Schrittweite kann angepasst werden)
+B      <- 20000             # Anzahl Simulationen pro p (größer => genauere Schätzung, aber langsamer)
+
+## Speicher für die geschätzten Wahrscheinlichkeiten
+p_hat <- numeric(length(grid_p))
+
+## Haupt-Loop: für jedes p die Wahrscheinlichkeit P(X=11) schätzen
+for (i in seq_along(grid_p)) {
+  p <- grid_p[i]
+  
+  # Ziehe B Stichproben aus Binomial(n, p)
+  # rbinom(B, n, p) liefert B Realisierungen
+  x <- rbinom(B, size = n, prob = p)
+  
+  # Schätze P(X=11) als relative Häufigkeit von 11ern
+  p_hat[i] <- mean(x == k)
+}
+
+## Finde das p mit maximaler geschätzter Wahrscheinlichkeit
+imax <- which.max(p_hat)
+p_max_sim <- grid_p[imax]
+p_max_sim
+# -> Das ist der (simulativ) gefundene Maximierer
+```
+
+(Optional) You can visualize the estimated curve:
+
+```         
+plot(grid_p, p_hat, type = "l",
+     xlab = "p", ylab = sprintf("geschätzte P(X = %d)", k),
+     main = sprintf("Schätzung von P(X=%d) für X~Binomial(%d,p)", k, n))
+abline(v = p_max_sim, lty = 2)
+```
+
+## 4) Exercise 2.4.3 — $U\sim\mathrm{Uniform}[0,1]$ probabilities via simulation
+
+```         
+ 1. Setze die Anzahl der Simulationen (je mehr, desto genauer)
+n <- 1e6  # 1 Million Zufallswerte
+
+# 2. Generiere n Zufallszahlen gleichverteilt auf [0, 1]
+U <- runif(n, min = 0, max = 1)
+
+# ============================================================
+# 3. Berechne die Wahrscheinlichkeiten durch Simulation
+# ============================================================
+
+# P(U ≤ 1/2):
+# Wir zählen, wie viele simulierte Werte kleiner oder gleich 0.5 sind
+# und teilen durch die Gesamtanzahl der Simulationen.
+p1 <- mean(U <= 1/2)
+
+# P(U ∈ [1/3, 2/3]):
+# Wir prüfen, wie viele Werte im Intervall [1/3, 2/3] liegen
+p2 <- mean(U >= 1/3 & U <= 2/3)
+
+# P(U = 1):
+# Bei einer stetigen Verteilung (wie Uniform[0,1]) ist P(U=1) theoretisch 0.
+# In der Simulation ist es praktisch fast nie der Fall, dass U genau 1 ist.
+p3 <- mean(U == 1)
+```
+
+## 5) Exercise 2.4.4 — $Z\sim\mathrm{Exponential}(4)$: tail probabilities via simulation
+
+```         
+```
+
+## 6) Exercise 2.4.5 — Find $c$ so that $f$ is a valid density
+
+We estimate $c$ by enforcing $\int_0^1 f(x)\,dx = 1$ using simulation.
+
+(i) $f(x)=c\,x$ on $(0,1)$.\
+(ii) $f(x)=c\,x^n$ on $(0,1)$ for a specified $n>-1$.
+
+```         
+```
+
+## 7) Exercise 2.5.3 — CDF of a scaled die via simulation
+
+Let $X$ be the outcome of a fair die scaled by $1/6$, so $X\in\{1/6,\dots,1\}$. Estimate and plot the empirical cdf.
+
+```         
+```
+
+We verify cdf properties empirically: nondecreasing (by construction), right-continuous (step ecdf), limits near 0 and 1:
+
+```         
+```
+
+## 8) Exercise 2.5.4 — $X\sim\mathcal{N}(0,1)$: probabilities via simulation
+
+```         
+```
+
+## 9) Exercise 2.6.2 — Affine transform of a uniform via simulation
+
+If $X\sim \mathrm{Uniform}[L,R]$ and $Y=cX+d$ with $c>0$, verify empirically that $Y$ is uniform on $[cL+d,\,cR+d]$.
+
+```         
+```
+
+## 10) Exercise 2.6.3 — Affine transform of a normal via simulation
+
+If $X\sim \mathcal{N}(\mu,\sigma^2)$ and $Y=cX+d$, verify the transformed moments empirically.
+
+```         
+```
