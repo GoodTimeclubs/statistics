@@ -1,36 +1,20 @@
-## ------------------------------------------------------------
-## Aufgabe: X ~ Binomial(n = 12, p). Maximiere P(X = 11) via Simulation
-## Vorgehen:
-##  1) Erzeuge ein feines Gitter für p in [0, 1].
-##  2) Für jedes p simuliere viele Binomial-Zufallsvariablen.
-##  3) Schätze P(X = 11) als relative Häufigkeit.
-##  4) Finde das p mit der größten geschätzten Wahrscheinlichkeit.
-##  5) (Optional) Vergleich mit exakter Berechnung via dbinom.
-## ------------------------------------------------------------
+#Binominial = zwei outcomes und mit zurücklegen
 
-set.seed(42)                # Reproduzierbarkeit
-n      <- 12                # Binomial-Parameter n
-k      <- 11                # Wir interessieren uns für P(X = 11)
-grid_p <- seq(0, 1, by = 0.001)  # p-Gitter (Schrittweite kann angepasst werden)
-B      <- 20000             # Anzahl Simulationen pro p (größer => genauere Schätzung, aber langsamer)
+# wahrscheinlichkeit das wir möglichst oft 11 mal den korb bei 12 würfen treffeb
+# p s in vektor in 0.0er schritten
+grid <- seq(0,1,0.01)
+#Pro p werden nrep Zahlen erstellt
+nrep <- 20000
 
-## Speicher für die geschätzten Wahrscheinlichkeiten
-p_hat <- numeric(length(grid_p))
+p11_est <- numeric(length(grid))
 
-## Haupt-Loop: für jedes p die Wahrscheinlichkeit P(X=11) schätzen
-for (i in seq_along(grid_p)) {
-  p <- grid_p[i]
-  
-  # Ziehe B Stichproben aus Binomial(n, p)
-  # rbinom(B, n, p) liefert B Realisierungen
-  x <- rbinom(B, size = n, prob = p)
-  
-  # Schätze P(X=11) als relative Häufigkeit von 11ern
-  p_hat[i] <- mean(x == k)
+for (i in seq_along(grid)){ # für alle im Grid
+  x <- rbinom (nrep, size = 12, prob = grid[i])
+  p11_est[i] <- mean(x == 11)
 }
 
-## Finde das p mit maximaler geschätzter Wahrscheinlichkeit
-imax <- which.max(p_hat)
-p_max_sim <- grid_p[imax]
-p_max_sim
-# -> Das ist der (simulativ) gefundene Maximierer
+imax <- which.max(p11_est)
+
+data.frame(p_grid = grid[imax], P_Xeq11_est = p11_est[imax])
+
+plot(p11_est)
