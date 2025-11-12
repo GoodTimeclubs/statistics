@@ -138,6 +138,7 @@ We estimate $c$ by enforcing $\int_0^1 f(x)\,dx = 1$ using simulation.
 (ii) $f(x)=c\,x^n$ on $(0,1)$ for a specified $n>-1$.
 
 ```         
+#f(x) = x*c = 1
 ```
 
 ## 7) Exercise 2.5.3 — CDF of a scaled die via simulation
@@ -145,6 +146,8 @@ We estimate $c$ by enforcing $\int_0^1 f(x)\,dx = 1$ using simulation.
 Let $X$ be the outcome of a fair die scaled by $1/6$, so $X\in\{1/6,\dots,1\}$. Estimate and plot the empirical cdf.
 
 ```         
+#CDF ist die wahrscheinlichkeit das ein Wert unter x liegt (<=x)
+#Alle wahrscheinlichkeiten darunter addieren
 ```
 
 We verify cdf properties empirically: nondecreasing (by construction), right-continuous (step ecdf), limits near 0 and 1:
@@ -169,4 +172,5 @@ If $X\sim \mathrm{Uniform}[L,R]$ and $Y=cX+d$ with $c>0$, verify empirically tha
 If $X\sim \mathcal{N}(\mu,\sigma^2)$ and $Y=cX+d$, verify the transformed moments empirically.
 
 ```         
+#Ergebnis bleibt auch Normalverteilt
 ```
