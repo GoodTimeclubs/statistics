@@ -9,4 +9,6 @@ Xg = rnorm (N, mean = mu, sd = sigma)
 
 Yg = c_coef * Xg * d_coef
 
-hist(Yg)
+c(sample_mean= mean(Yg), sample_var= var(Yg))
+
+hist(Yg,breaks = 60, probability = T)
