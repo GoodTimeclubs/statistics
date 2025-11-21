@@ -192,7 +192,7 @@ range_ecdf = c(min(X), max(X))
 #dnorm für genau ein x
 #pnorm für WK <= x
 
-Xn = nrorm (N, mean = 0, sd = 1)
+Xn = rnorm (N, mean = 0, sd = 1)
 
 #zwischen 2 und 7
 p_a = mean(Xn > 2 & Xn <7)
