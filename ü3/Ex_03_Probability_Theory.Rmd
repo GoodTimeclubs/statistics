@@ -135,8 +135,26 @@ We estimate $c$ by enforcing $\int_0^1 f(x)\,dx = 1$ using simulation.
 (i) $f(x)=c\,x$ on $(0,1)$.\
 (ii) $f(x)=c\,x^n$ on $(0,1)$ for a specified $n>-1$.
 
-```         
+``` r
 #f(x) = x*c = 1
+
+N = 1000
+
+x <- runif(N) #random
+int_hat = mean(x) #Durchschnittshöhe und Breite ist 1
+
+c_hat_i = 1/int_hat
+c_hat_i
+
+#einzeiler für Fläche
+#intigrate(function(x)x, 0,1)
+
+n_power = 2
+int_hat_n = mean(x^n_power)
+
+c_hat_ii = 1/int_hat_n
+
+c_hat_ii
 ```
 
 ## 7) Exercise 2.5.3 — CDF of a scaled die via simulation
@@ -146,16 +164,54 @@ Let $X$ be the outcome of a fair die scaled by $1/6$, so $X\in\{1/6,\dots,1\}$. 
 ```         
 #CDF ist die wahrscheinlichkeit das ein Wert unter x liegt (<=x)
 #Alle wahrscheinlichkeiten darunter addieren
+
+#ecdf(x)
+
+N = 1000000
+
+#Simuliere N faire würfe
+die = sample (1:6, N , replace = TRUE)
+
+#Zufallswert
+X = die / 6
+
+plot(ecdf(X), main = "Empirical CDF of  = (die outcome)/6")
 ```
 
 We verify cdf properties empirically: nondecreasing (by construction), right-continuous (step ecdf), limits near 0 and 1:
 
 ```         
+range_ecdf = c(min(X), max(X))
 ```
 
 ## 8) Exercise 2.5.4 — $X\sim\mathcal{N}(0,1)$: probabilities via simulation
 
 ```         
+#Normalverteilung
+#rnorm(n,MEAN,Standard Abweichung)
+#dnorm für genau ein x
+#pnorm für WK <= x
+
+Xn = nrorm (N, mean = 0, sd = 1)
+
+#zwischen 2 und 7
+p_a = mean(Xn > 2 & Xn <7)
+
+#kleiner gleich 2
+pnorm(2)
+
+#größer als 2
+1-pnorm(2)
+
+#Zwischen 2 und 7
+pnorm(6) - pnorm(2)
+
+#kleiner gleich minus drei
+pnorm(-3)
+
+#standardfehler sqrt(p(1-p)/N)
+se_a = sqrt(p_a*(1-p_a)/N)
+se_b = sqrt(p_b*(1-p_b)/N)
 ```
 
 ## 9) Exercise 2.6.2 — Affine transform of a uniform via simulation
@@ -163,6 +219,19 @@ We verify cdf properties empirically: nondecreasing (by construction), right-con
 If $X\sim \mathrm{Uniform}[L,R]$ and $Y=cX+d$ with $c>0$, verify empirically that $Y$ is uniform on $[cL+d,\,cR+d]$.
 
 ```         
+# ~ = folgt der Verteilung
+#Untere grenze L und obere grenze R
+N = 1000000
+
+L = -2
+R = 5
+ccoef = 1.5
+dcoef = -0.25
+
+Xu = runif(N, min = L, max = R)
+Yt = c_coef * Xu + d_coef
+
+hist(Yt)
 ```
 
 ## 10) Exercise 2.6.3 — Affine transform of a normal via simulation
@@ -171,4 +240,16 @@ If $X\sim \mathcal{N}(\mu,\sigma^2)$ and $Y=cX+d$, verify the transformed moment
 
 ```         
 #Ergebnis bleibt auch Normalverteilt
+N = 1000000
+
+mu = 1.2
+sigma = 0.7
+c_coef = -2
+d_coef = 0.3
+
+Xg = rnorm (N, mean = mu, sd = sigma)
+
+Yg = c_coef * Xg * d_coef
+
+hist(Yg)
 ```
