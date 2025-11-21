@@ -1,0 +1,235 @@
+---
+title: "Ex02: Probability Theory — Practice Set (10 Exercises)"
+author: "Martin Simon"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+set.seed(1)
+```
+
+# 1) Exercise 1.2.10
+
+Let $\Omega = \{1,2,3\}, P(\{1\})=1/2, P(\{2\})=1/3, P(\{3\})=1/6$. Answer questions (a)-(d) from the lecture notes both with pen and paper and with R.
+
+For the latter you may proceed as follows:
+
+-   Create a list `subs` containing all possible subsets of $\Omega$, each represented as a character vector of element names.
+
+    Bonus: Can you do this automatically?
+
+-   Create a named numeric vector `p` where the names "1", "2", and "3" correspond to elements of the sample space $\Omega$, and their values are their probabilities.
+
+-   Use vector subsetting by name to extract the entries "1" and "2" from `p`, then sum them to obtain `P_12`.
+
+-   Sum all elements of `p` to obtain `P_all`
+
+-   Apply an anonymous function to each element `A` of the list `subs`:
+
+    (i) If `A` is nonempty, it uses vector subsetting `p[A]` to extract the probabilities corresponding to the names in `A`, then computes their sum.
+
+    (ii) If `A` is empty (`length(A)==0`), it returns `0`
+
+    -\> The result `vals` is a numeric vector of event probabilities, one per subset
+
+-   Assign descriptive names to the elements of `vals` for easier reading.
+
+-   As output construct a named list with three components:
+
+    (i) `P_12`: the probability of {1,2}
+
+    (ii) `P_all`: the total probability
+
+    (iii) `events_p_eq_half`: a subset of `vals` selected using logical indexing, keeping only those events where `vals = 0.5` (within numerical tolerance 1e-12).
+
+```{r}
+p <- c(`1`=.5, `2`=1/3, `3`=1/6)
+P_12  <- sum(p[c("1","2")])
+P_all <- sum(p)
+subs <- list(c(), "1","2","3", c("1","2"),c("1","3"),c("2","3"), c("1","2","3"))
+vals <- sapply(subs, function(A) if(length(A)) sum(p[A]) else 0)
+names(vals) <- c("∅","{1}","{2}","{3}","{1,2}","{1,3}","{2,3}","Ω")
+list(P_12=P_12, P_all=P_all, events_P_eq_half=vals[abs(vals-.5)<1e-12])
+```
+
+# 2) Exercise 1.3.2
+
+Answer the question from the lecture notes both exactly with pen and paper and approximately via simulation.
+
+For the latter you may proceed as follows:
+
+-   Set a number `N` of samples you would like to simulate (experiment with different values for `N`)
+
+-   Draw `N` samples `x` uniformly from $\Omega=\{1,2,...,100\}$ so that the components of `x` are independent and identically distributed (i.i.d.) uniform on $\Omega$.
+
+-   Compute an estimate `mean(x%%3==0 \| x%%5==0)`, where `%%` is the modulo operator
+
+-   Compare this to the exact answer obtained via pen and paper
+
+-   As output construct a named numeric vector with the estimate and the exact value
+
+```{r}
+N <- 1e5
+x <- sample(1:100, N, TRUE)
+est <- mean(x%%3==0 | x%%5==0)
+exact <- (floor(100/3)+floor(100/5)-floor(100/15))/100
+c(estimate=est, exact=exact)
+```
+
+# 3) Example 1.4.6
+
+Answer the question from the lecture notes both exactly with pen and paper and approximately via simulation.
+
+For the latter you may proceed as follows:
+
+-   Set a number `N` of samples you would like to simulate (experiment with different values for `N`)
+
+-   Draw `2N` independent die outcomes (uniform on $\{1,2,...,6\}$)
+
+-   Reshape the resulting vector into an `Nx2` matrix by columns, i.e.,
+
+    -   Column 1 = the first `N` draws
+
+    -   Column 2 = the next `N` draws
+
+    -   Each row now represents one trial with two dice
+
+-   Add the two dice in each row, producing a length-`N` vector `s` of sums.
+
+-   Compute an estimate `mean(s==10)`
+
+-   As output construct a named numeric vector with the estimate and the exact value
+
+```{r}
+p_exact <- 3/36
+N <- 1e6
+s <- rowSums(matrix(sample(1:6, 2*N, TRUE), ncol=2))
+p_mc <- mean(s==10)
+c(exact=p_exact, mc=p_mc)
+```
+
+# 4) Exercise 1.4.13
+
+Answer the question from the lecture notes both exactly with pen and paper and in R (no simulation this time).
+
+```{r}
+total <- choose(52,5)
+p_all_spades <- choose(13,5)/total
+p_no_pairs   <- (choose(13,5) * 4^5) / total
+p_full_house <- (choose(13,1)*choose(4,3) * choose(12,1)*choose(4,2)) / total
+c(all_spades=p_all_spades, no_pairs=p_no_pairs, full_house=p_full_house)
+```
+
+# 5) Challenge 1.4.30
+
+Answer the question (a)-(d) from the lecture notes exactly with pen and paper and answer (d) approximately via simulation.
+
+For the latter you may proceed as follows:
+
+-   Define a function that takes as inputs `C` and the number of samples `N`
+
+-   Simulate `C` birthdays, i.i.d. uniform on $\{1,2,...,365\}$ (no leap days)
+
+-   Use the function `duplicated(v)` which returns a logical vector making entries that repeat a value seen earlier in `v`; the first occurrence is `FALSE`; any repeated occurrence of the same day is `TRUE`
+
+-   Use the `any` function to collapse the aforementioned logical vector to a single `TRUE`/`FALSE`: Is there at least one duplicate?
+
+-   Repeat the whole "Simulate C birthdays and check for a duplicate" experiment `N` times and return a logical vector of length `N`: `TRUE` if the trial had a match.
+
+-   Compute an estimate of $P(\text{some pair matches})$ using the `mean` function
+
+-   Run accross different group sizes and find the 50% crossover
+
+```{r}
+prob_match <- function(C, N=200){
+  anydup <- function(v) any(duplicated(v))
+  mean(replicate(N, anydup(sample(1:365, C, TRUE))))
+}
+Cs <- 2:60
+pm <- sapply(Cs, prob_match)
+Cs[which(pm>.5)[1]]
+```
+
+# 6) Exercise 1.5.4
+
+Answer the question from the lecture notes both exactly with pen and paper and approximately via simulation.
+
+```{r}
+N <- 1e6
+X <- matrix(sample(c("H","T"), 3*N, TRUE), ncol=3)
+E <- rowSums(X=="H")==2
+mean(X[E,1]=="H")
+```
+
+# 7) Example 1.5.1
+
+Answer the following question approximately via simulation: Given that the ball is blue, what is the probability, the urn was urn 2?
+
+```{r}
+p_blue <- 0.5*(2/5) + 0.5*(7/11)
+p_exact <- (0.5*(7/11)) / p_blue
+N <- 1e6
+urn <- sample(1:2, N, TRUE)
+draw_blue <- ifelse(
+  urn==1,
+  sample(c(rep("B",2),rep("R",3)), N, TRUE),
+  sample(c(rep("B",7),rep("R",4)), N, TRUE)
+)
+mean(urn==2 & draw_blue=="B")/mean(draw_blue=="B")
+```
+
+# 8) Exercise 1.5.13
+
+Answer the question (a)-(e) from the lecture notes exactly with pen and paper and answer (b) and (d) approximately via simulation.
+
+```{r}
+N <- 1e6
+r <- sample(1:6, N, TRUE)
+b <- sample(1:6, N, TRUE)
+A <- r==b; C <- r==4; D <- b==4
+c(
+  A_and_C = mean(A & C),
+  A_times_C = mean(A)*mean(C),
+  C_and_D = mean(C & D),
+  C_times_D = mean(C)*mean(D)
+)
+```
+
+# 9) Challenge 1.5.19
+
+Answer the question from the lecture notes exactly with pen and paper and approximately via simulation.
+
+```{r}
+k <- 0:5
+p_exact <- dhyper(k, m=8, n=12, k=5)
+N <- 2e5
+reds <- replicate(N, sum(sample(c(rep(1,8), rep(0,12)), 5)))
+p_mc <- table(factor(reds, levels=k))/N
+cbind(k, exact=round(p_exact,6), mc=round(as.numeric(p_mc),6))
+```
+
+# 10) Example 1.5.3
+
+Answer the question "Should the contestant in the Monty Hall Show stay or switch?" approximately via simulation.
+
+```{r}
+N <- 1e6
+prize <- sample(1:3, N, TRUE)
+pick  <- sample(1:3, N, TRUE)
+open <- integer(N)
+same <- prize==pick
+open[same] <- vapply(prize[same], function(pr) sample(setdiff(1:3, pr), 1), integer(1))
+open[!same] <- 6 - prize[!same] - pick[!same]
+switch_to <- 6 - pick - open
+stay_win   <- mean(pick==prize)
+switch_win <- mean(switch_to==prize)
+c(stay=stay_win, switch=switch_win)
+```
