@@ -135,7 +135,7 @@ We estimate $c$ by enforcing $\int_0^1 f(x)\,dx = 1$ using simulation.
 (i) $f(x)=c\,x$ on $(0,1)$.\
 (ii) $f(x)=c\,x^n$ on $(0,1)$ for a specified $n>-1$.
 
-``` R
+``` r
 #f(x) = x*c = 1
 
 N = 1000
@@ -182,7 +182,6 @@ We verify cdf properties empirically: nondecreasing (by construction), right-con
 
 ```         
 range_ecdf = c(min(X), max(X))
-
 ```
 
 ## 8) Exercise 2.5.4 — $X\sim\mathcal{N}(0,1)$: probabilities via simulation
