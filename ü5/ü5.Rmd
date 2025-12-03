@@ -1,0 +1,96 @@
+---
+title: "ü5"
+author: "Ben Gutzeit"
+date: "2025-12-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rdwd) #paket zum herunterladen der DWD daten
+library(dplyr) 
+library(readr)
+```
+
+# Pull Data
+
+```{r pulldata}
+meta <- selectDWD(id = 1420, res = "daily", var = "kl", per = "recent")
+meta
+file <- dataDWD(meta, read = FALSE)
+df <- readDWD(file)
+```
+
+# Definition
+
+-   STATIONS ID: Station identifier
+-   MESS DATUM: Date of measurement
+-   QN 3: Quality level for precipitation-related variables
+-   FX: Maximum wind gust (m/s)
+-   FM: Mean wind speed (m/s)
+-   QN 4: Quality code for temperature, humidity, radiation
+-   RSK: Daily precipitation amount (mm)
+-   RSKF: Precipitation form (0=no precipitation, 6=rain, etc.)
+-   SDK: Sunshine duration (hours)
+-   SHK TAG: Snow depth (cm)
+-   NM: Cloud cover
+-   VPM: Water vapor pressure (hPa)
+-   PM: Air pressure (hPa)
+-   TMK: Mean daily air temperature (°C)
+-   UPM: Relative humidity (%)
+-   TXK: Daily maximum temperature (°C)
+-   TNK: Daily minimum temperature (°C)
+-   TGK: Minimum ground-level temperature (°C)
+-   eor: End-of-record marker (can be removed)
+
+# Basic Cleaning
+
+```{r basiccleaning}
+df <- df %>% select(-eor) # remove end-of-record flag 
+df <- df %>% na.omit() # remove missing entries
+df$MESS_DATUM <- as.Date(df$MESS_DATUM)
+```
+
+# Exploratory Plots
+
+```{r plot_temp}
+plot(df$MESS_DATUM, df$TMK, type = "l", xlab = "Datum", ylab = "TMK(C°)", main = "Zeitreihe der mittleren Tagestemperatur (TMK)")
+```
+
+```{r plot_rain}
+plot(df$MESS_DATUM, df$RSK, type = "h", xlab = "Datum", ylab = "RSK(mm)", main = "Precipitation Time Series")
+```
+
+```{r plot_sunshine}
+plot(df$MESS_DATUM, df$SDK, type = "h", xlab = "Datum", ylab = "SDK(h)", main = "Sunshine Hours Distribution")
+```
+
+# Summary Statistics
+
+```{r}
+typicalTemperature <- mean(df$TMK)
+typicalTemperature
+
+rain <- mean(df$RSKF > 0)
+rain
+
+sunshine <- sd(df$SDK)
+sunshine
+
+maxwind <- max(df$FX)
+maxwind
+```
+
+# Hottest Day
+```{r}
+indexmaxTemp <- which.max(df$TXK) #index auswählen
+hottestday <- df[indexmaxTemp, ] #r,c
+hottestday
+```
+
+# Maximum wind day
+```{r}
+indexmaxWind <- which.max(df$FX) #index auswählen
+windiestday <- df[indexmaxWind, ] #r,c
+windiestday
+```
