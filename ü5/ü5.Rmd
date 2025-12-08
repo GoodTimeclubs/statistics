@@ -82,6 +82,7 @@ maxwind
 ```
 
 # Hottest Day
+
 ```{r}
 indexmaxTemp <- which.max(df$TXK) #index auswählen
 hottestday <- df[indexmaxTemp, ] #r,c
@@ -89,6 +90,7 @@ hottestday
 ```
 
 # Maximum wind day
+
 ```{r}
 indexmaxWind <- which.max(df$FX) #index auswählen
 windiestday <- df[indexmaxWind, ] #r,c
