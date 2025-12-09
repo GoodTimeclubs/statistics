@@ -145,9 +145,75 @@ ggplot(bwt, aes(x = bwt)) +
 -   roughly symmetric
 
 # 4.1 Plot the empirical cumulative distribution function (ECDF) of bwt using stat_ecdf().
+The empirical cumulative distribution function (ECDF) shows the proportion of data points less than or equal to each value in a sample.
 
 ```{r ue41}
 
 ggplot(bwt, aes(x = bwt)) + stat_ecdf()
 
+```
+
+# 4.2 From the ECDF or directly in R, estimate the proportion of babies with birth weight
+≤ 2500 g.
+
+```{r u42}
+lowbabies <- sum(bwt$bwt <= 2500)
+
+proplowbabies = lowbabies / nrow(bwt)
+
+print(proplowbabies)
+
+```
+
+~ 0.3
+
+# 4.3 Estimate the median birth weight visually from the ECDF and compare with the value
+from median(bwt$bwt).
+
+guess: ~3000g
+```{r u43}
+
+median(bwt$bwt)
+
+```
+
+#For the birth weight bwt:
+
+# 5.1 Compute the six-number summary (min, Q1, x, ˜ x, Q ¯ 3, max).
+
+The six-number summary is a set of statistics that describes a dataset using the minimum, first quartile (Q1), median, mean, third quartile (Q3), and maximum values.
+
+
+```{r ü51}
+
+summary(bwt$bwt)
+
+```
+
+
+# 5.2 Compare the mean and median. What does their relationship suggest about the skewness of the distribution?
+
+Mit skewness ist die Schiefe einer Verteilung gemeint – also ob die Daten symmetrisch verteilt sind oder ob sie nach links oder rechts verzerrt (verschoben) sind.
+
+they are both relatively close to each other wich suggests symmetry
+
+# For the maternal weight at last menstrual period lwt (in pounds):
+
+# 6.1 Compute the range, interquartile range, and standard deviation of lwt.
+
+* Range = gesamte Spannweite aller Werte
+
+* Interquartile Range = Spannweite der mittleren Hälfte der Werte (robuster gegen Ausreißer)
+
+```{r u61}
+
+range <- max(bwt$lwt) - min(bwt$lwt)
+print("Range:")
+range
+InterquartileRange <- (quantile(bwt$lwt, 0.75) - quantile(bwt$lwt, 0.25))
+print("Interquartile Range:")
+InterquartileRange
+standardDeviation <- sd(bwt$lwt)
+print("standard Deviation:")
+standardDeviation
 ```
