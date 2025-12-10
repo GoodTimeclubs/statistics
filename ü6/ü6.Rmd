@@ -142,7 +142,16 @@ ggplot(bwt, aes(x = bwt)) +
 
 # 3.3 Does the distribution of birth weight appear roughly symmetric, right-skewed, or leftskewed?
 
--   roughly symmetric
+```{r ü33}
+#ist right skewed laut rule of thumb
+(mean(bwt$bwt) < median(bwt$bwt))
+
+
+#ist left skewed laut rule of thumb
+(mean(bwt$bwt) > median(bwt$bwt))
+```
+
+-   right skewed
 
 # 4.1 Plot the empirical cumulative distribution function (ECDF) of bwt using stat_ecdf().
 The empirical cumulative distribution function (ECDF) shows the proportion of data points less than or equal to each value in a sample.
@@ -150,6 +159,7 @@ The empirical cumulative distribution function (ECDF) shows the proportion of da
 ```{r ue41}
 
 ggplot(bwt, aes(x = bwt)) + stat_ecdf()
+plot(ecdf(bwt$bwt))
 
 ```
 
@@ -163,6 +173,13 @@ proplowbabies = lowbabies / nrow(bwt)
 
 print(proplowbabies)
 
+#kürzer
+mean(bwt$bwt <= 2500)
+
+#oder
+
+p = ecdf(bwt$bwt)
+p(2500)
 ```
 
 ~ 0.3
@@ -195,7 +212,7 @@ summary(bwt$bwt)
 
 Mit skewness ist die Schiefe einer Verteilung gemeint – also ob die Daten symmetrisch verteilt sind oder ob sie nach links oder rechts verzerrt (verschoben) sind.
 
-they are both relatively close to each other wich suggests symmetry
+Mean < Median  => left skewed
 
 # For the maternal weight at last menstrual period lwt (in pounds):
 
@@ -216,4 +233,27 @@ InterquartileRange
 standardDeviation <- sd(bwt$lwt)
 print("standard Deviation:")
 standardDeviation
+```
+
+# 6.3 
+
+```{r ü63}
+boxplot(bwt$lwt)
+```
+
+
+# 7.1
+```{r u71}
+ggplot(bwt,aes(x = smoke, y = bwt))+
+  geom_boxplot()
+
+boxplot(bwt$bwt ~ bwt$smoke)
+```
+
+# 7.2 
+
+```{r ü71}
+
+bwt %>% group_by(smoke) %>% summarise(median_bwt = median(bwt))
+
 ```
