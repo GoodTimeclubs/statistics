@@ -154,6 +154,7 @@ ggplot(bwt, aes(x = bwt)) +
 -   right skewed
 
 # 4.1 Plot the empirical cumulative distribution function (ECDF) of bwt using stat_ecdf().
+
 The empirical cumulative distribution function (ECDF) shows the proportion of data points less than or equal to each value in a sample.
 
 ```{r ue41}
@@ -164,6 +165,7 @@ plot(ecdf(bwt$bwt))
 ```
 
 # 4.2 From the ECDF or directly in R, estimate the proportion of babies with birth weight
+
 ≤ 2500 g.
 
 ```{r u42}
@@ -182,12 +184,14 @@ p = ecdf(bwt$bwt)
 p(2500)
 ```
 
-~ 0.3
+\~ 0.3
 
 # 4.3 Estimate the median birth weight visually from the ECDF and compare with the value
-from median(bwt$bwt).
 
-guess: ~3000g
+from median(bwt\$bwt).
+
+guess: \~3000g
+
 ```{r u43}
 
 median(bwt$bwt)
@@ -200,27 +204,25 @@ median(bwt$bwt)
 
 The six-number summary is a set of statistics that describes a dataset using the minimum, first quartile (Q1), median, mean, third quartile (Q3), and maximum values.
 
-
 ```{r ü51}
 
 summary(bwt$bwt)
 
 ```
 
-
 # 5.2 Compare the mean and median. What does their relationship suggest about the skewness of the distribution?
 
 Mit skewness ist die Schiefe einer Verteilung gemeint – also ob die Daten symmetrisch verteilt sind oder ob sie nach links oder rechts verzerrt (verschoben) sind.
 
-Mean < Median  => left skewed
+Mean \< Median =\> left skewed
 
 # For the maternal weight at last menstrual period lwt (in pounds):
 
 # 6.1 Compute the range, interquartile range, and standard deviation of lwt.
 
-* Range = gesamte Spannweite aller Werte
+-   Range = gesamte Spannweite aller Werte
 
-* Interquartile Range = Spannweite der mittleren Hälfte der Werte (robuster gegen Ausreißer)
+-   Interquartile Range = Spannweite der mittleren Hälfte der Werte (robuster gegen Ausreißer)
 
 ```{r u61}
 
@@ -235,14 +237,14 @@ print("standard Deviation:")
 standardDeviation
 ```
 
-# 6.3 
+# 6.3
 
 ```{r ü63}
 boxplot(bwt$lwt)
 ```
 
-
 # 7.1
+
 ```{r u71}
 ggplot(bwt,aes(x = smoke, y = bwt))+
   geom_boxplot()
@@ -250,10 +252,135 @@ ggplot(bwt,aes(x = smoke, y = bwt))+
 boxplot(bwt$bwt ~ bwt$smoke)
 ```
 
-# 7.2 
+# 7.2
 
 ```{r ü71}
 
 bwt %>% group_by(smoke) %>% summarise(median_bwt = median(bwt))
+
+```
+
+#7.3 Compare the IQR in both groups and comment on variability.
+
+```{r ü72}
+
+bwt %>% group_by(smoke) %>% summarise(iqr = IQR(bwt))
+
+
+```
+
+Das Gewicht variert mehr als bei nichtrauchern als bei rauchern
+
+# 7.4 Do there appear to be more outliers in one group than the other?
+
+There are more outliers for smoker
+
+# 8.1 Produce a density plot of bwt stratified by smoke.
+
+```{r u81}
+
+ggplot(bwt, aes(x = bwt, fill = smoke)) +
+  geom_density()
+
+```
+
+# 8.2 Describe how the distributions of birth weight differ between smokers and non-smokers (shape, location, spread).
+
+# 9.1 Produce a so-called violin plot of bwt by smoke.
+
+```{r u91}
+
+ggplot(bwt, aes(x=bwt, y=smoke))+
+  geom_violin() +
+  
+
+```
+
+# 9.2 Compare the violin plot with the boxplot. What additional information does the violin plot reveal about the shape of the distributions?
+
+```{r u92}
+
+ggplot(bwt, aes(x=bwt, y=smoke))+
+  geom_violin() +
+  geom_boxplot()
+
+```
+
+It provides a more detiled view of the destribution espachialy above 75% and below 25%
+
+#Consider the relationship between maternal weight lwt and birth weight bwt.
+
+# 10.1 Make a scatterplot of bwt versus lwt.
+
+```{r u101}
+
+plot(bwt$bwt ~ bwt$lwt,
+xlab = "LWT",ylab = "BWT")
+
+```
+
+# 10.2 Does higher maternal weight appear to be associated with higher birth weight?
+
+no
+
+# 10.3 Are there any obvious outliers or unusual points?
+
+yes auround the BWT of 3000 are outlies up to 250 LWT
+
+# 11.1 Compute the correlation between lwt and bwt.
+
+```{r u111}
+
+cor(bwt$lwt, bwt$bwt)
+
+
+
+```
+
+# 11.2 Interpret the sign and magnitude of the correlation (direction and strength).
+
+Interpretation des Vorzeichens (Direction)
+
+Das Vorzeichen von r zeigt die Richtung des Zusammenhangs:
+
+Vorzeichen Bedeutung r \> 0 positiver Zusammenhang – wenn X steigt, steigt Y tendenziell r \< 0 negativer Zusammenhang – wenn X steigt, sinkt Y tendenziell r = 0 kein linearer Zusammenhang
+
+Der Betrag von r (also \|r\|) zeigt die Stärke des linearen Zusammenhangs:
+
+|             | r            |
+|-------------|--------------|
+| 0.00 – 0.19 | sehr schwach |
+| 0.20 – 0.39 | schwach      |
+| 0.40 – 0.59 | mittel       |
+| 0.60 – 0.79 | stark        |
+| 0.80 – 1.00 | sehr stark   |
+
+Merke: Je näher \|r\| bei 1 liegt, desto stärker ist der lineare Zusammenhang.
+
+Direction = positive Strength = very low
+
+# 11.3 Is your interpretation consistent with the scatterplot from Exercise 10?
+
+yes
+
+# Consider the relationship between smoking status smoke and low birth weight indicator low.
+
+# 12.1 Construct the contingency table table(bwt$smoke, bwt$low).
+```{r u121}
+
+table(bwt$smoke, bwt$low)
+
+```
+
+# 12.2 Compute row-wise proportions using prop.table(..., margin = 1)
+```{r u122}
+
+prop.table(table(bwt$smoke, bwt$low), margin = 1)
+
+```
+
+# 12.3 From the table and proportions, which group (smokers or non-smokers) appears to have a higher proportion of low birth weight?
+```{r u123}
+
 
 ```
