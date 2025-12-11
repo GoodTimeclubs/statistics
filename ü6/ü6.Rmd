@@ -368,19 +368,44 @@ yes
 # 12.1 Construct the contingency table table(bwt$smoke, bwt$low).
 ```{r u121}
 
-table(bwt$smoke, bwt$low)
+tab <- table(bwt$smoke, bwt$low)
+rownames(tab) <- c("Non-smoker", "Smoker")
+colnames(tab) <- c("Normal weight", "Low weight")
+tab
+
 
 ```
 
 # 12.2 Compute row-wise proportions using prop.table(..., margin = 1)
 ```{r u122}
 
-prop.table(table(bwt$smoke, bwt$low), margin = 1)
-
+prtab <- prop.table(table(bwt$smoke, bwt$low), margin = 1)
+rownames(prtab) <- c("Non-smoker", "Smoker")
+colnames(prtab) <- c("Normal weight", "Low weight")
+prtab
 ```
 
 # 12.3 From the table and proportions, which group (smokers or non-smokers) appears to have a higher proportion of low birth weight?
-```{r u123}
 
+Smoker
+
+# 13.1 Perform a chi-square test of independence between smoke and low.
+
+p < 0.05 → Zusammenhang wahrscheinlich vorhanden
+p ≥ 0.05 → kein nachweisbarer Zusammenhang
+
+```{r u131}
+
+chisq.test(bwt$smoke,bwt$low)
+
+#You interpret a chi-square test by checking whether the p-value is below your significance level to decide if the variables show a statistically significant association.
 
 ```
+
+
+# 13.2 State the null and alternative hypotheses.
+
+Du musst einmal aufschreiben, was „kein Effekt“ bedeutet (H₀) und was „ein Effekt“ bedeutet (H₁).
+
+* **null hypotheses** = smoking is not dependency to low birth weight.
+* **alternative hypotheses** = smoking is in dependency to low birth weight.
