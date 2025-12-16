@@ -409,3 +409,20 @@ Du musst einmal aufschreiben, was „kein Effekt“ bedeutet (H₀) und was „e
 
 * **null hypotheses** = smoking is not dependency to low birth weight.
 * **alternative hypotheses** = smoking is in dependency to low birth weight.
+
+
+# 14.1 Using fisher.test(tab), compute the odds ratio for low birth weight comparing smokers and non-smokers.
+
+```{r 141}
+
+tab <- table(bwt$low, bwt$smoke)
+res <- fisher.test(tab)
+res$estimate
+
+
+```
+
+
+# 14.2 Interpret the odds ratio: is the odds of low birth weight higher for smokers? By approximately what factor?
+
+yes the odds are approximarely twice as high.
