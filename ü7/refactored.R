@@ -126,7 +126,7 @@ dwd %>%
 #T6
 library(broom)
  model <- lm(t_mean ~ sun, data = dwd)
- nlsfit <- nls(t_mean ~ sun, data = dwd)
+ #nlsfit <- nls(t_mean ~ sun, data = dwd)?
 
  tidy(model)
  glance(model)
