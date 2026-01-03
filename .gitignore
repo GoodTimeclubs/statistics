@@ -6,6 +6,7 @@
 .RData
 .RDataTmp
 *renv*
+*.Rproj.user*
 
 # User-specific files
 .Ruserdata
