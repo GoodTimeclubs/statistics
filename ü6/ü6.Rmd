@@ -142,7 +142,16 @@ ggplot(bwt, aes(x = bwt)) +
 
 # 3.3 Does the distribution of birth weight appear roughly symmetric, right-skewed, or leftskewed?
 
--   roughly symmetric
+```{r ü33}
+#ist right skewed laut rule of thumb
+(mean(bwt$bwt) < median(bwt$bwt))
+
+
+#ist left skewed laut rule of thumb
+(mean(bwt$bwt) > median(bwt$bwt))
+```
+
+-   right skewed
 
 # 4.1 Plot the empirical cumulative distribution function (ECDF) of bwt using stat_ecdf().
 
@@ -151,6 +160,7 @@ The empirical cumulative distribution function (ECDF) shows the proportion of da
 ```{r ue41}
 
 ggplot(bwt, aes(x = bwt)) + stat_ecdf()
+plot(ecdf(bwt$bwt))
 
 ```
 
@@ -165,6 +175,13 @@ proplowbabies = lowbabies / nrow(bwt)
 
 print(proplowbabies)
 
+#kürzer
+mean(bwt$bwt <= 2500)
+
+#oder
+
+p = ecdf(bwt$bwt)
+p(2500)
 ```
 
 \~ 0.3
@@ -197,7 +214,7 @@ summary(bwt$bwt)
 
 Mit skewness ist die Schiefe einer Verteilung gemeint – also ob die Daten symmetrisch verteilt sind oder ob sie nach links oder rechts verzerrt (verschoben) sind.
 
-they are both relatively close to each other wich suggests symmetry
+Mean \< Median =\> left skewed
 
 # For the maternal weight at last menstrual period lwt (in pounds):
 
@@ -219,3 +236,193 @@ standardDeviation <- sd(bwt$lwt)
 print("standard Deviation:")
 standardDeviation
 ```
+
+# 6.3
+
+```{r ü63}
+boxplot(bwt$lwt)
+```
+
+# 7.1
+
+```{r u71}
+ggplot(bwt,aes(x = smoke, y = bwt))+
+  geom_boxplot()
+
+boxplot(bwt$bwt ~ bwt$smoke)
+```
+
+# 7.2
+
+```{r ü71}
+
+bwt %>% group_by(smoke) %>% summarise(median_bwt = median(bwt))
+
+```
+
+#7.3 Compare the IQR in both groups and comment on variability.
+
+```{r ü72}
+
+bwt %>% group_by(smoke) %>% summarise(iqr = IQR(bwt))
+
+
+```
+
+Das Gewicht variert mehr als bei nichtrauchern als bei rauchern
+
+# 7.4 Do there appear to be more outliers in one group than the other?
+
+There are more outliers for smoker
+
+# 8.1 Produce a density plot of bwt stratified by smoke.
+
+```{r u81}
+
+ggplot(bwt, aes(x = bwt, fill = smoke)) +
+  geom_density()
+
+```
+
+# 8.2 Describe how the distributions of birth weight differ between smokers and non-smokers (shape, location, spread).
+
+# 9.1 Produce a so-called violin plot of bwt by smoke.
+
+```{r u91}
+
+ggplot(bwt, aes(x=bwt, y=smoke))+
+  geom_violin() +
+  
+
+```
+
+# 9.2 Compare the violin plot with the boxplot. What additional information does the violin plot reveal about the shape of the distributions?
+
+```{r u92}
+
+ggplot(bwt, aes(x=bwt, y=smoke))+
+  geom_violin() +
+  geom_boxplot()
+
+```
+
+It provides a more detiled view of the destribution espachialy above 75% and below 25%
+
+#Consider the relationship between maternal weight lwt and birth weight bwt.
+
+# 10.1 Make a scatterplot of bwt versus lwt.
+
+```{r u101}
+
+plot(bwt$bwt ~ bwt$lwt,
+xlab = "LWT",ylab = "BWT")
+
+```
+
+# 10.2 Does higher maternal weight appear to be associated with higher birth weight?
+
+no
+
+# 10.3 Are there any obvious outliers or unusual points?
+
+yes auround the BWT of 3000 are outlies up to 250 LWT
+
+# 11.1 Compute the correlation between lwt and bwt.
+
+```{r u111}
+
+cor(bwt$lwt, bwt$bwt)
+
+
+
+```
+
+# 11.2 Interpret the sign and magnitude of the correlation (direction and strength).
+
+Interpretation des Vorzeichens (Direction)
+
+Das Vorzeichen von r zeigt die Richtung des Zusammenhangs:
+
+Vorzeichen Bedeutung r \> 0 positiver Zusammenhang – wenn X steigt, steigt Y tendenziell r \< 0 negativer Zusammenhang – wenn X steigt, sinkt Y tendenziell r = 0 kein linearer Zusammenhang
+
+Der Betrag von r (also \|r\|) zeigt die Stärke des linearen Zusammenhangs:
+
+|             | r            |
+|-------------|--------------|
+| 0.00 – 0.19 | sehr schwach |
+| 0.20 – 0.39 | schwach      |
+| 0.40 – 0.59 | mittel       |
+| 0.60 – 0.79 | stark        |
+| 0.80 – 1.00 | sehr stark   |
+
+Merke: Je näher \|r\| bei 1 liegt, desto stärker ist der lineare Zusammenhang.
+
+Direction = positive Strength = very low
+
+# 11.3 Is your interpretation consistent with the scatterplot from Exercise 10?
+
+yes
+
+# Consider the relationship between smoking status smoke and low birth weight indicator low.
+
+# 12.1 Construct the contingency table table(bwt$smoke, bwt$low).
+```{r u121}
+
+tab <- table(bwt$smoke, bwt$low)
+rownames(tab) <- c("Non-smoker", "Smoker")
+colnames(tab) <- c("Normal weight", "Low weight")
+tab
+
+
+```
+
+# 12.2 Compute row-wise proportions using prop.table(..., margin = 1)
+```{r u122}
+
+prtab <- prop.table(table(bwt$smoke, bwt$low), margin = 1)
+rownames(prtab) <- c("Non-smoker", "Smoker")
+colnames(prtab) <- c("Normal weight", "Low weight")
+prtab
+```
+
+# 12.3 From the table and proportions, which group (smokers or non-smokers) appears to have a higher proportion of low birth weight?
+
+Smoker
+
+# 13.1 Perform a chi-square test of independence between smoke and low.
+
+p < 0.05 → Zusammenhang wahrscheinlich vorhanden
+p ≥ 0.05 → kein nachweisbarer Zusammenhang
+
+```{r u131}
+
+chisq.test(bwt$smoke,bwt$low)
+
+#You interpret a chi-square test by checking whether the p-value is below your significance level to decide if the variables show a statistically significant association.
+
+```
+
+
+# 13.2 State the null and alternative hypotheses.
+
+Du musst einmal aufschreiben, was „kein Effekt“ bedeutet (H₀) und was „ein Effekt“ bedeutet (H₁).
+
+* **null hypotheses** = smoking is not dependency to low birth weight.
+* **alternative hypotheses** = smoking is in dependency to low birth weight.
+
+
+# 14.1 Using fisher.test(tab), compute the odds ratio for low birth weight comparing smokers and non-smokers.
+
+```{r 141}
+
+tab <- table(bwt$low, bwt$smoke)
+res <- fisher.test(tab)
+res$estimate
+
+
+```
+
+
+# 14.2 Interpret the odds ratio: is the odds of low birth weight higher for smokers? By approximately what factor?
+
+yes the odds are approximarely twice as high.
