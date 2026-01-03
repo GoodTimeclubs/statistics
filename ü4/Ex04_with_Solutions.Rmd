@@ -1,0 +1,186 @@
+---
+title: "Ex04: Probability Theory III"
+author: "Martin Simon"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+# Exercise 4.2.4: Weak LLN
+
+**Exercise text:**\
+Let $X_i \sim \mathrm{Uniform}[0,1]$ i.i.d. Prove with pen and paper that\
+$$
+\bar X_n = \frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{P} \frac12.
+$$ Simulate\
+$$
+P(|\bar X_n - 1/2| > 0.05)
+$$ for various $n$ and confirm the Weak LLN empirically.
+
+```{r}
+set.seed(1)
+N <- 20000
+eps <- 0.05
+nvec <- c(10, 50, 100, 500, 1000, 5000)
+
+prob_hat <- sapply(nvec, function(n){
+  X <- matrix(runif(N*n), nrow=N)
+  mean(abs(rowMeans(X) - 0.5) > eps)
+})
+
+data.frame(n = nvec, Empirical = prob_hat)
+```
+
+# Bonus: Chebyshev Inequality Comparison
+
+**Exercise text:**\
+Using Chebyshev’s inequality, bound\
+$$
+P(|\bar X_n - 1/2|\ge 0.05)
+$$ for $X_i \sim \mathrm{Uniform}[0,1]$. Compare your bound to the empirical values in Exercise 1.
+
+```{r}
+varX <- 1/12
+bound <- varX/(nvec*eps^2)
+data.frame(n = nvec, Chebyshev_bound = bound, Empirical_prob = prob_hat)
+```
+
+# Exercise 4.4.4: CLT Approximation
+
+**Exercise text:**\
+Let $Y_i \sim \mathrm{Exp}(3)$. Approximate\
+$$
+P\left(\sum_{i=1}^{1600} Y_i \le 540\right)
+$$ using the CLT and compare with an empirical Monte Carlo estimate.
+
+```{r}
+lambda <- 3
+n <- 1600
+EY <- 1/lambda
+VarY <- 1/lambda^2
+ESn <- n*EY
+sdSn <- sqrt(n*VarY)
+p_clt <- pnorm((540-ESn)/sdSn)
+p_clt
+```
+
+```{r}
+S_samples <- replicate(N, sum(rexp(n, lambda)))
+p_mc <- mean(S_samples <= 540)
+data.frame(CLT = p_clt, Empirical = p_mc)
+```
+
+# Exercise 4.4.5: Convergence in Distribution
+
+**Exercise text:**\
+Show with pen and paper that if $X_n \sim N(0, 1/n)$, then $X_n \xrightarrow{D} 0$.\
+Illustrate this using simulation histograms.
+
+```{r,fig.height=4}
+par(mar = c(4, 4, 2, 1))   # bottom, left, top, right margins
+nvec2 <- c(1, 5, 20, 100, 500)
+
+par(mfrow=c(2,3))
+for(n in nvec2){
+  X <- rnorm(20000, mean=0, sd=sqrt(1/n))
+  hist(X, breaks=50, prob=TRUE, main=paste("n =", n))
+  curve(dnorm(x,0,1/sqrt(n)), add=TRUE, col="red", lwd=2)
+}
+par(mfrow=c(1,1))
+```
+
+# Bonus: Convergence in Probability but not Almost Surely
+
+**Exercise text.**\
+Consider independent random variables $(X_n)_{n \ge 1}$ with $$
+P(X_n = 1) = \frac{1}{n}, \qquad P(X_n = 0) = 1 - \frac{1}{n}.
+$$
+
+1.  Show analytically that $X_n \xrightarrow{P} 0$.\
+2.  (Theory) One can prove that with probability 1, $X_n = 1$ occurs infinitely often; hence $X_n$ does **not** converge almost surely to 0.\
+3.  Use simulation to:
+    -   illustrate convergence in probability (for each fixed $n$, $P(X_n = 1) \approx 1/n$), and
+
+    -   give empirical evidence that 1's keep occurring at large indices, hinting at the lack of almost sure convergence.
+
+## (a) Convergence in probability: empirical P(X_n = 1)
+
+```{r}
+set.seed(5)
+
+M <- 2000   # number of sample paths
+N_max <- 5000   # length of each path
+
+# Simulate U_{m,n} ~ Uniform[0,1] and set X_{m,n} = 1(U <= 1/n)
+U <- matrix(runif(M * N_max), nrow = M, ncol = N_max)
+n_index <- 1:N_max
+prob_vec <- 1 / n_index
+
+X_01 <- sweep(U, 2, prob_vec, FUN = "<=") * 1  # matrix of 0/1
+
+n_grid <- c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000)
+
+emp_prob <- sapply(n_grid, function(n) {
+  mean(X_01[, n] == 1)
+})
+theo_prob <- 1 / n_grid
+
+data.frame(
+  n = n_grid,
+  Empirical_P_Xn_eq_1 = emp_prob,
+  Theoretical_1_over_n = theo_prob
+)
+```
+
+## (b) Number of ones per path (up to N_max)
+
+```{r, fig.height=4}
+ones_per_path <- rowSums(X_01)
+
+summary(ones_per_path)
+
+par(mar = c(4,4,2,1))
+hist(ones_per_path, breaks = 40,
+     main = paste("Number of 1's per path (up to n =", N_max, ")"),
+     xlab = "Count of X_n = 1", col = "gray")
+```
+
+## (c) 1's still appear at large indices
+
+```{r}
+check_k <- c(10, 50, 100, 500, 1000, 2000, 3000, 4000)
+
+prob_some_1_after_k <- sapply(check_k, function(k) {
+  has_one <- apply(X_01[, k:N_max, drop = FALSE], 1, function(row) any(row == 1))
+  mean(has_one)
+})
+
+data.frame(
+  k = check_k,
+  P_hat_at_least_one_1_after_k = prob_some_1_after_k
+)
+```
+
+## (d) Sample paths view (first few paths, first 500 steps)
+
+```{r, fig.height=4}
+par(mar = c(4,4,2,1))
+paths_to_plot <- 5
+matplot(
+  t(X_01[1:paths_to_plot, 1:500]),
+  type = "l", lty = 1,
+  main = "First 5 paths (first 500 steps)",
+  xlab = "n", ylab = "X_n"
+)
+```
+
+**Interpretation.**\
+- You should see from the table in 6(a) that $P(X_n = 1)$ decays like $1/n$, matching convergence in probability to 0.\
+- The histogram and tail probabilities in 6(b)–(c) show that each path contains many 1's, and even after large indices $k$, the chance of seeing another 1 is still high.\
+- This mirrors the theoretical statement that $X_n = 1$ happens infinitely often with probability 1, so $X_n$ does not converge almost surely to 0.\
+- Thus, this example demonstrates concretely that almost sure convergence is strictly stronger than convergence in probability.
