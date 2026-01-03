@@ -1,0 +1,285 @@
+---
+title: "Mock Exam — Statistics"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+  pdf_document: default
+geometry: margin=1in
+fontsize: 11pt
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+set.seed(123)
+```
+
+**Instructions**
+
+-   Answer directly in this file and knit to HTML or PDF at the end.
+-   Provide both **R output** and **short written interpretation** where requested.
+-   Total: **100 points**.
+
+------------------------------------------------------------------------
+
+# Part A — R Basics and Probability Theory (40 points)
+
+## A1. Data types and factors (7 points)
+
+Create the following object and answer the questions.
+
+```{r}
+x <- c(1, 2, 2, 3, 3, 3)
+g <- factor(c("A","B","A","B","B","A"))
+df <- data.frame(x = x, g = g)
+str(df)
+```
+
+1.  What does one **row** in `df` represent?
+
+    *Write your answer here.*
+
+2.  How many observations are in group `A` and in group `B`?\
+    *Write your answer here.*
+
+3.  Compute the **mean of `x`** separately for each group.
+
+    ```{r}
+
+    ```
+
+## A2. Monte Carlo simulation (8 points)
+
+Let $\Omega = \{1,2,\dots,100\}$. Draw $N=50{,}000$ values uniformly from $\Omega$ (with replacement). Estimate:
+
+$$
+P(\text{multiple of 3} \mid \text{multiple of 3 or 5})
+$$
+
+1.  Compute the Monte Carlo estimate in R.
+
+    ```{r}
+
+    ```
+
+2.  Compute the exact value by counting and compare.
+
+    *Write your answer here.*
+
+## A3. Sampling from a non-normal distribution (25 points)
+
+The goal of this exercise is to illustrate the **Central Limit Theorem** using simulation.
+
+Let $X \sim \text{Exponential}(\lambda = 1)$.
+
+1.  Draw $N = 10{,}000$ independent samples of size\
+    $n = 5$, $n = 30$, and $n = 100$.
+
+    ```{r}
+
+    ```
+
+2.  For each $n$, compute the **sample mean**.
+
+    ```{r}
+
+    ```
+
+3.  For each $n$, create a **histogram of the sample means** and overlay a **normal density** with the appropriate mean and variance.
+
+    ```{r}
+
+    ```
+
+4.  For each sample size $n$, define the standardized mean
+
+$$
+Z_n = \frac{\bar X_n - \mu}{\sigma / \sqrt{n}},
+$$
+
+where $\mu$ and $\sigma$ are the true mean and standard deviation of the exponential distribution.
+
+a)  Compute $Z_n$ for $n = 5, 30, 100$.
+
+    ```{r}
+
+    ```
+
+b)  Create histograms of $Z_n$ and compare them to the standard normal distribution.
+
+    ```{r}
+
+    ```
+
+Answer the following:
+
+c)  How does the distribution of $\bar X_n$ change as $n$ increases?
+
+    *Write your answer here.*\
+
+d)  Why does the CLT apply even though the original data are not normally distributed?
+
+    *Write your answer here.*
+
+e)  What is the purpose of standardization in the CLT?
+
+    *Write your answer here.*
+
+------------------------------------------------------------------------
+
+# Part B — Descriptive statistics (45 points)
+
+We use `birthwt` from the MASS package.
+
+```{r}
+library(MASS)
+library(dplyr)
+library(ggplot2)
+library(forcats)
+
+data(birthwt)
+
+bwt <- birthwt %>%
+  mutate(
+    smoke = factor(smoke, levels = c(0,1), labels = c("No","Yes")),
+    ht    = factor(ht, levels = c(0,1), labels = c("No","Yes")),
+    ui    = factor(ui, levels = c(0,1), labels = c("No","Yes")),
+    low   = factor(low, levels = c(0,1), labels = c("No","Yes"))
+  )
+```
+
+## B1. Variable overview (6 points)
+
+1.  In your own words: what does one row of `bwt` represent?
+
+    *Write your answer here.*\
+
+2.  List **two categorical** and **two numeric** variables in `bwt`.
+
+    *Write your answer here.*
+
+## B2. Histograms + ECDF (10 points)
+
+For the numeric variable `bwt$bwt` (birth weight in grams):
+
+1.  Create two histograms with different bin widths (e.g. 150 and 400).
+
+    ```{r}
+
+    ```
+
+2.  Create an ECDF plot.
+
+    ```{r}
+
+    ```
+
+3.  From the ECDF (or in R), estimate the proportion of babies with birth weight $\le 2500$ g. Write a sentence or two interpreting 1) how bin width affects the histogram and 2) what you see in the ECDF.
+
+    ```{r}
+
+    ```
+
+    *Write your answer here.*
+
+## B3. Group comparison: smokers vs non-smokers (9 points)
+
+1.  Create a **boxplot** of `bwt` by `smoke`.
+
+    ```{r}
+
+    ```
+
+2.  Report the median birth weight for each group.
+
+    ```{r}
+
+    ```
+
+3.  In 3–4 sentences, summarize how smoking relates to birth weight using (i) the boxplot and (ii) the medians.
+
+    ```{r}
+
+    ```
+
+    *Write your answer here.*
+
+## B4. Contingency table + chi-square (10 points)
+
+Consider the relationship between `smoke` and `low`.
+
+1.  Create the contingency table.
+
+    ```{r}
+
+    ```
+
+2.  Compute **row-wise proportions** (within smoking status).
+
+    ```{r}
+
+    ```
+
+3.  Perform a chi-square test of independence and state the null hypothesis in words.
+
+    ```{r}
+
+    ```
+
+    *Write your answer here.*
+
+## B5. Scatterplot + correlation (10 points)
+
+Study the relationship between maternal weight `lwt` and birth weight `bwt`.
+
+1.  Make a scatterplot (`bwt` vs `lwt`).
+
+    ```{r}
+
+    ```
+
+2.  Compute the correlation and interpret the sign and magnitude.
+
+    ```{r}
+
+    ```
+
+------------------------------------------------------------------------
+
+# Part C — Inferential statistics (15 points)
+
+## C1. Fit and interpret a linear model (15 points)
+
+Fit the model
+
+$$
+\texttt{bwt} \sim \texttt{lwt}.
+$$
+
+1.  Fit the model and print the summary.
+
+    ```{r}
+
+    ```
+
+2.  Write down the estimated regression equation.
+
+    *Write your answer here.*
+
+3.  Interpret the slope in context (one sentence).
+
+    *Write your answer here.*
+
+4.  Add the regression line to your scatterplot.
+
+```{r}
+
+```
+
+# Submission checklist (not graded)
+
+-   [ ] The file knits without errors.
+-   [ ] All plots have readable axis labels and titles.
+-   [ ] Each requested interpretation is written in full sentences.
