@@ -1,4 +1,3 @@
-<img width="1040" height="720" alt="R" src="https://github.com/user-attachments/assets/114c7024-e30c-4931-b4e4-1d6498f449b2" />
 <img width="1040" height="720" alt="Random Variables Discrete Distributions" src="https://github.com/user-attachments/assets/7e59cb32-18a8-4307-9923-ab9660ce1d11" />
 
 
