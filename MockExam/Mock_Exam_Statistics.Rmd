@@ -39,15 +39,19 @@ str(df)
 
 1.  What does one **row** in `df` represent?
 
-    *Write your answer here.*
+    *The value of x and g at the given index.*
 
 2.  How many observations are in group `A` and in group `B`?\
-    *Write your answer here.*
+    *In group A and B are 3 observations each*
 
 3.  Compute the **mean of `x`** separately for each group.
 
     ```{r}
+    Amean <- mean(df$x[df$g == "A"])
+    Bmean <- mean(df$x[df$g == "B"])
 
+    Amean
+    Bmean
     ```
 
 ## A2. Monte Carlo simulation (8 points)
@@ -61,7 +65,12 @@ $$
 1.  Compute the Monte Carlo estimate in R.
 
     ```{r}
+    N <- 50000
+    Omega <- sample(1:100,N,TRUE)
 
+    p <- mean((Omega %% 3) == 0) / mean((Omega %% 3) == 0 | (Omega %% 5) == 0)
+
+    p
     ```
 
 2.  Compute the exact value by counting and compare.
@@ -78,22 +87,43 @@ Let $X \sim \text{Exponential}(\lambda = 1)$.
     $n = 5$, $n = 30$, and $n = 100$.
 
     ```{r}
+    N <- 10000
+    exn5 <- rexp(5,N)
+    exn30 <- rexp(30,N)
+    exn100 <- rexp(100,N)
 
     ```
 
 2.  For each $n$, compute the **sample mean**.
 
     ```{r}
+    mexn5 <- mean(exn5)
+    mexn30 <- mean(exn30)
+    mexn100 <- mean(exn100)
 
+    mexn5
+    mexn30
+    mexn100
     ```
 
-3.  For each $n$, create a **histogram of the sample means** and overlay a **normal density** with the appropriate mean and variance.
+3.  
+
+    labs()
+
+4.  For each $n$, create a **histogram of the sample means** and overlay a **normal density** with the appropriate mean and variance.
 
     ```{r}
+    hist(exn5,freq = FALSE,breaks = 3,main = "Histogram of the sample means with size 5", xlab = "Samplespace of size 5")
+    curve(dnorm(x, mean = mexn5, sd = sd(exn5)), add = TRUE , lwd = 2)
 
+    hist(exn30,freq = FALSE,10,main = "Histogram of the sample means with size 30", xlab = "Samplespace of size 30")
+    curve(dnorm(x, mean = mexn30, sd = sd(exn30)), add = TRUE , lwd = 2)
+
+    hist(exn100,freq = FALSE,10,main = "Histogram of the sample means with size 100", xlab = "Samplespace of size 100")
+    curve(dnorm(x, mean = mexn100, sd = sd(exn100)), add = TRUE , lwd = 2)
     ```
 
-4.  For each sample size $n$, define the standardized mean
+5.  For each sample size $n$, define the standardized mean
 
 $$
 Z_n = \frac{\bar X_n - \mu}{\sigma / \sqrt{n}},
@@ -154,11 +184,12 @@ bwt <- birthwt %>%
 
 1.  In your own words: what does one row of `bwt` represent?
 
-    *Write your answer here.*\
+    *one measurement of a newborn baby with the Attributes low, age, lwt, race, smoke, ptl, ht, ui, ftv, bwt*\
 
 2.  List **two categorical** and **two numeric** variables in `bwt`.
 
-    *Write your answer here.*
+    *categorical: low, smoke\
+    numeric: age, lwt*
 
 ## B2. Histograms + ECDF (10 points)
 
@@ -167,35 +198,59 @@ For the numeric variable `bwt$bwt` (birth weight in grams):
 1.  Create two histograms with different bin widths (e.g. 150 and 400).
 
     ```{r}
+    ggplot(bwt, aes(x = bwt))+
+      geom_histogram(binwidth = 150)+
+      labs(
+        title = "Histogram of Birthweight With Width 150", 
+        x = "Birthweight (bwt)")
 
+    ggplot(bwt, aes(x = bwt))+
+      geom_histogram(binwidth = 400)+
+      labs(title = "Histogram of Birthweight With Width 400",
+           x = "Birthweight (bwt)")
     ```
 
 2.  Create an ECDF plot.
 
     ```{r}
 
+    ggplot(bwt, aes(x = bwt))+
+      stat_ecdf()+
+      labs(
+        title = "ECDF of Birthweight", 
+        x = "Birthweight (bwt)",
+        y = "ECDF")
     ```
 
 3.  From the ECDF (or in R), estimate the proportion of babies with birth weight $\le 2500$ g. Write a sentence or two interpreting 1) how bin width affects the histogram and 2) what you see in the ECDF.
 
     ```{r}
-
+    mean(bwt$bwt <= 2500)
     ```
 
-    *Write your answer here.*
+    If the bin width increases in a histogram it looses details.\
+    The ECDF describes the data density for the birth weights, the middle of the data is at 3000g.
 
 ## B3. Group comparison: smokers vs non-smokers (9 points)
 
 1.  Create a **boxplot** of `bwt` by `smoke`.
 
     ```{r}
-
+    ggplot(bwt, aes(x = bwt, colour = smoke))+
+      geom_boxplot()+
+      labs(
+        title = "boxplot of bwt by smoke", 
+        x = "Birthweight (bwt)")
     ```
 
 2.  Report the median birth weight for each group.
 
     ```{r}
+    nonsmoke <- median(bwt$bwt[bwt$smoke == "No"])
+    smoke <- median(bwt$bwt[bwt$smoke == "Yes"])
 
+    nonsmoke
+    smoke
     ```
 
 3.  In 3–4 sentences, summarize how smoking relates to birth weight using (i) the boxplot and (ii) the medians.
@@ -204,7 +259,9 @@ For the numeric variable `bwt$bwt` (birth weight in grams):
 
     ```
 
-    *Write your answer here.*
+    *If the mother is a smoker the median birth weight is \~400g lower then the median from a nonsmoker.\
+    The birth weight of smokers has also less spread then the birth weight of non smokers.\
+    Smokers also have a outstander on very low birthgweigt at \~500g total weight*
 
 ## B4. Contingency table + chi-square (10 points)
 
@@ -213,22 +270,22 @@ Consider the relationship between `smoke` and `low`.
 1.  Create the contingency table.
 
     ```{r}
-
+    ctab <- table(smoke = bwt$smoke,low = bwt$low)
     ```
 
 2.  Compute **row-wise proportions** (within smoking status).
 
     ```{r}
-
+    prop.table(ctab,1)
     ```
 
 3.  Perform a chi-square test of independence and state the null hypothesis in words.
 
     ```{r}
-
+    chisq.test(ctab)
     ```
 
-    *Write your answer here.*
+    H0 = The smoking status of the mother is independent to the low birth weight
 
 ## B5. Scatterplot + correlation (10 points)
 
@@ -237,14 +294,17 @@ Study the relationship between maternal weight `lwt` and birth weight `bwt`.
 1.  Make a scatterplot (`bwt` vs `lwt`).
 
     ```{r}
-
+    plot(bwt$bwt ~ bwt$lwt, main = "scatterplot Birthweight vs weight of mother", 
+         ylab = "Birthweight (bwt)", xlab = "weight of mother in pounds (lwt)")
     ```
 
 2.  Compute the correlation and interpret the sign and magnitude.
 
     ```{r}
-
+    cor.test(bwt$bwt, bwt$lwt)
     ```
+
+    The positive sign indicates that as maternal weight increases, birth weight tends to increase. However, the magnitude is small (around 0.18), indicating a weak linear relationship.
 
 ------------------------------------------------------------------------
 
@@ -261,21 +321,24 @@ $$
 1.  Fit the model and print the summary.
 
     ```{r}
-
+    fit <- lm(bwt ~ lwt, data = bwt)
+    summary(fit)
     ```
 
 2.  Write down the estimated regression equation.
 
-    *Write your answer here.*
+    \^bwt=Intercept+steigung\*lwt = 2369.624 + 4.429 \* lwt
 
 3.  Interpret the slope in context (one sentence).
 
-    *Write your answer here.*
+    For each one-unit increase in the mother’s weight (`lwt`), the expected birth weight (`bwt`) increases on average by about **4.43 grams**
 
 4.  Add the regression line to your scatterplot.
 
 ```{r}
-
+plot(bwt$bwt ~ bwt$lwt, main = "scatterplot Birthweight vs weight of mother", 
+     ylab = "Birthweight (bwt)", xlab = "weight of mother in pounds (lwt)")
+abline(fit)
 ```
 
 # Submission checklist (not graded)
