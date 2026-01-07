@@ -106,9 +106,7 @@ Let $X \sim \text{Exponential}(\lambda = 1)$.
     mexn100
     ```
 
-3.  
-
-    labs()
+3.  labs()
 
 4.  For each $n$, create a **histogram of the sample means** and overlay a **normal density** with the appropriate mean and variance.
 
