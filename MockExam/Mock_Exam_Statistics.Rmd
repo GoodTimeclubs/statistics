@@ -50,6 +50,8 @@ str(df)
     Amean <- mean(df$x[df$g == "A"])
     Bmean <- mean(df$x[df$g == "B"])
 
+    df %>% count(g)
+
     Amean
     Bmean
     ```
@@ -106,9 +108,7 @@ Let $X \sim \text{Exponential}(\lambda = 1)$.
     mexn100
     ```
 
-3.  
-
-    labs()
+3.  labs()
 
 4.  For each $n$, create a **histogram of the sample means** and overlay a **normal density** with the appropriate mean and variance.
 
@@ -134,7 +134,7 @@ where $\mu$ and $\sigma$ are the true mean and standard deviation of the exponen
 a)  Compute $Z_n$ for $n = 5, 30, 100$.
 
     ```{r}
-
+    z_5 = (means_5 -1) * sqrt(5)
     ```
 
 b)  Create histograms of $Z_n$ and compare them to the standard normal distribution.
@@ -147,7 +147,7 @@ Answer the following:
 
 c)  How does the distribution of $\bar X_n$ change as $n$ increases?
 
-    *Write your answer here.*\
+    *Write your answer here. mehr an normalverteilung (varianz und standard von Verteilungen aufschreiben*\
 
 d)  Why does the CLT apply even though the original data are not normally distributed?
 
@@ -271,6 +271,7 @@ Consider the relationship between `smoke` and `low`.
 
     ```{r}
     ctab <- table(smoke = bwt$smoke,low = bwt$low)
+    ctab
     ```
 
 2.  Compute **row-wise proportions** (within smoking status).
@@ -323,6 +324,8 @@ $$
     ```{r}
     fit <- lm(bwt ~ lwt, data = bwt)
     summary(fit)
+
+    coef(model)
     ```
 
 2.  Write down the estimated regression equation.
