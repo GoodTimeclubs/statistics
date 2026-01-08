@@ -193,6 +193,20 @@ Write a function `z_score(x)` that returns standardized values `(x - mean(x))/sd
 Solution
 
 ```{r}
+z_score <- function(x){
+  if (sd(x) == 0){
+    print("WARNING! standard deviation is 0")
+  }
+  else
+  {
+    return((x-mean(x)/sd(x)))
+  }
+}
+
+z_score(c(5,5,5))
+
+z_score(c(1,2,3,4))
+
 ```
 
 ------------------------------------------------------------------------
@@ -212,6 +226,14 @@ Using the built‑in dataset `mtcars`, compute for each column:
 Solution
 
 ```{r}
+mtcars
+sapply(mtcars, mean)
+
+apply(mtcars,2,quantile,probs = c(0.25,0.75))
+
+by_cyl <- aggregate(. ~ cyl, data = mtcars, FUN = mean)
+
+
 ```
 
 ------------------------------------------------------------------------
