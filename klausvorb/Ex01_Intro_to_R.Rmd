@@ -247,6 +247,23 @@ Simulate data from a linear model `y = 3 + 2x + e` where `x ~ N(0,1)` and `e ~ N
 Solution
 
 ```{r}
+n <- 100
+x <- rnorm(n) #Was bedeutet das (0,1)?
+e <- rnorm(n)
+
+y <- 3+2*x+e
+
+fit <- lm(y~x)
+sulm <- summary(fit)
+
+sulm$coefficients
+
+sulm$r.squared
+
+sulm$sigma
+
+plot(fitted(fit),residuals(fit),pch=19)
+
 ```
 
 ------------------------------------------------------------------------
@@ -262,4 +279,17 @@ This is a preview - we will discuss sampling from distributions in detail later.
 Solution
 
 ```{r}
+n <- 10000
+hist(rnorm(n),breaks = 50,freq = F)
+curve(dnorm(x, 0, 1), add = TRUE)
+
+
+set.seed(1)
+v1 <- rnorm(5)
+set.seed(1)
+v2 <- rnorm(5)
+v1
+v2
+identical(v1,v2)
+
 ```
