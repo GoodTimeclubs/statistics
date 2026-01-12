@@ -1,0 +1,287 @@
+---
+title: "Ex08: Inferential Statistics - Simple Linear Regression (6 exercises)"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Dataset used throughout
+
+We use the **built-in** R dataset `cars`, which records stopping
+distances (ft) for cars at different speeds (mph).
+
+```{R}
+cars
+```
+
+------------------------------------------------------------------------
+
+# Exercise 1: Least squares fit (manual)
+
+In this exercise you compute the least-squares line *without* using
+`lm()`.
+
+Recall $$
+b_1=\frac{\sum (x_i-\bar x)(y_i-\bar y)}{\sum (x_i-\bar x)^2},
+\qquad
+b_0=\bar y-b_1\bar x.
+$$
+
+## 1.1 Compute $\bar x$, $\bar y$, $b_1$, $b_0$
+
+```{R}
+x <- cars$speed
+y <- cars$dist
+xbar <- mean(x)
+ybar <- mean(y)
+b1 <- sum((x-xbar)*(y-ybar)) / sum((x-xbar)^2)
+b0 <- ybar - b1*xbar
+
+list(xbar = xbar, ybar = ybar, b0 = b0, b1 = b1)
+```
+
+## 1.2 Fitted values and residuals (manual)
+
+Compute $$
+\hat y_i=b_0+b_1x_i,\qquad e_i=y_i-\hat y_i.
+$$
+
+```{R}
+yhat <- b0 + b1 * x
+e <- y - yhat
+```
+
+### Checks (normal-equation properties)
+
+1.  Verify that `sum(e)` is (numerically) close to 0.\
+2.  Verify that `sum(e * (x - xbar))` is (numerically) close to 0.
+
+```{R}
+sum(e)
+sum(e * (x - xbar))
+```
+
+## 1.3 Plot data + your fitted line
+
+```{R}
+plot(cars)
+abline(a = b0, b = b1, col = "red", lwd = 2)
+```
+
+**Question:** Does a straight line seem plausible from the scatter plot
+alone?
+
+------------------------------------------------------------------------
+
+# Exercise 2: ANOVA decomposition, $R^2$, and correlation (manual)
+
+## 2.1 Compute TSS, RSS, SSE and verify TSS = RSS + SSE
+
+Recall $$
+\text{TSS}=\sum (y_i-\bar y)^2,\quad
+\text{RSS}=\sum (\hat y_i-\bar y)^2,\quad
+\text{SSE}=\sum (y_i-\hat y_i)^2.
+$$
+
+```{R}
+tss = sum((y - ybar)^2) # Total Sum of Squares
+rss = sum((yhat - ybar)^2) # Regression Sum of Squares
+sse = sum((y - yhat)^2) # Error Sum of Squares
+
+list(tts = tss,rss = rss,sse = sse)
+```
+
+## 2.2 Compute $R^2$ two ways
+
+$$
+R^2=\frac{\text{RSS}}{\text{TSS}} = 1 - \frac{\text{SSE}}{\text{TSS}}.
+$$
+
+```{R}
+firstRsquare = rss/tss
+secondRsquare = 1-(sse/tss)
+
+list(firstRsquare = firstRsquare, secondRsquare = secondRsquare)
+```
+
+## 2.3 Show (numerically) that $R^2=r_{xy}^2$
+
+Compute the sample correlation `cor(x, y)` and compare its square to
+your `R2_from_RSS`.
+
+```{R}
+rxy = cor(x,y)
+r2xy = rxy^2
+
+list(firstRsquare = firstRsquare, r2xy = r2xy)
+
+all.equal(firstRsquare,r2xy)
+```
+
+**Question:** Why does a high $R^2$ *not* imply that speed *causes*
+stopping distance (in general)?
+
+A high R^2 indicates strong association and predictive power, but it
+does not imply causation because confounding variables, reverse
+causality, and model fit alone cannot establish a causal mechanism.
+
+------------------------------------------------------------------------
+
+# Exercise 3: Inference under normal errors (manual)
+
+In this exercise you compute standard errors and tests *using the
+formulas*, and then later compare to `lm()`.
+
+## 3.1 Residual variance $s^2$
+
+$$
+s^2 = \frac{\text{SSE}}{n-2},\qquad s=\sqrt{s^2}.
+$$
+
+```{R}
+n <- length(y)
+s2 = sse / (n-2)
+s = sqrt(s2)
+
+list( s2 = s2, s = s)
+```
+
+## 3.2 Standard errors for $b_1$ and $b_0$
+
+$$
+\mathrm{se}(b_1)=\frac{s}{\sqrt{S_{xx}}},\qquad
+\mathrm{se}(b_0)=s\sqrt{\frac{1}{n}+\frac{\bar x^2}{S_{xx}}}.
+$$
+
+```{R}
+sxx = sum((x-xbar)^2)
+seb1 = s/sqrt(sxx)
+seb0 = s*sqrt(1/n+xbar^2/sxx)
+
+list(seb1 = seb1, seb0 = seb0)
+```
+
+## 3.3 Test $H_0: \beta_1=0$ (two-sided) using a t statistic
+
+$$
+T_1 = \frac{b_1-0}{\mathrm{se}(b_1)} \sim t_{n-2}.
+$$
+
+```{R}
+t1 = ((b1 -0) / (seb1)) ~ 
+```
+
+## 3.4 95% confidence interval for $\beta_1$
+
+```{R}
+```
+
+------------------------------------------------------------------------
+
+# Exercise 4: Mean response vs. prediction at a chosen speed
+
+Pick a speed value `x0` (try both interpolation and extrapolation).
+
+```{R}
+```
+
+## 4.1 Point prediction (fitted mean)
+
+```{R}
+```
+
+## 4.2 95% CI for the mean response at $x_0$
+
+$$
+\mathrm{se}(\hat m(x_0)) = s\sqrt{\frac{1}{n}+\frac{(x_0-\bar x)^2}{S_{xx}}}.
+$$
+
+```{R}
+```
+
+## 4.3 95% prediction interval for a new observation at $x_0$
+
+$$
+\mathrm{se}_{\text{pred}} = s\sqrt{1+\frac{1}{n}+\frac{(x_0-\bar x)^2}{S_{xx}}}.
+$$
+
+```{R}
+```
+
+**Question:** Why is the prediction interval wider than the CI for the
+mean?
+
+------------------------------------------------------------------------
+
+# Exercise 5: Residuals and model checking
+
+## 5.1 Standardized residuals
+
+Compute leverage values $$
+h_{ii}=\frac{1}{n}+\frac{(x_i-\bar x)^2}{S_{xx}}
+$$ and standardized residuals $$
+r_i = \frac{e_i}{s\sqrt{1-h_{ii}}}.
+$$
+
+```{R}
+```
+
+## 5.2 Residuals vs predictor
+
+```{R}
+```
+
+## 5.3 Normal Q–Q plot
+
+```{R}
+```
+
+### Interpretation questions
+
+-   Do you see evidence of nonlinearity (curvature) in the residual
+    plot?
+-   Do you see evidence of non-constant variance (spread changing with
+    speed)?
+-   Are there potential outliers (e.g., \|r\| \> 3)?
+
+------------------------------------------------------------------------
+
+# Exercise 6: Compare your manual computations to `lm()`
+
+Now verify that your hand-computed quantities match what R reports.
+
+## 6.1 Compare coefficients
+
+```{R}
+```
+
+## 6.2 Compare SSE, $s$, and $R^2$
+
+```{R}
+```
+
+## 6.3 Compare standard errors and the t-test for the slope
+
+```{R}
+```
+
+## 6.4 Compare confidence intervals
+
+```{R}
+```
+
+## 6.5 (Optional) Compare mean CI and prediction interval with `predict()`
+
+```         
+```
+
+------------------------------------------------------------------------
