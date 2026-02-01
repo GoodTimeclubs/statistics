@@ -245,7 +245,7 @@ CI
 ```
 
 ```{r}
-# Optional: CI for sigma
+# Optional: CI for sigma # für interwall für sd einfach die wurzel ziehen
 CI_sig <- sqrt(CI)
 CI_sig
 ```
@@ -346,7 +346,7 @@ list(adult = p_hat, child = p_hat_child)
 2\. Comment: which method seems more trustworthy here and why?
 
 ```{r}
-prob.test()
+prop.test(x_child, n_child)$conf.int
 ```
 
 ------------------------------------------------------------------------
