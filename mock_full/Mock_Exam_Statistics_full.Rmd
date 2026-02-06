@@ -105,7 +105,7 @@ Let $X \sim \text{Exponential}(\lambda = 1)$.
 
     ```{r}
     hist(mn5, probability = TRUE)
-    curve(dnorm(x, mean = 1, sd = 1/sqrt(5)), add = TRUE)
+    curve(dnorm(x, mean = 1, sd = 1), add = TRUE)
 
     hist(mn30, probability = TRUE)
     curve(dnorm(x, mean = 1, sd = 1/sqrt(30)), add = TRUE)
